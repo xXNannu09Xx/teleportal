@@ -19,7 +19,7 @@ function love.load()
     player.gravity = 1500
     player.isGrounded = false
 
-    floorY = 500
+    floorY = 600
     background_image = love.graphics.newImage("christianBale.jpg")
 end
 
@@ -56,3 +56,4 @@ function love.draw()
 
     love.graphics.rectangle("fill", player.x, player.y, player.width, player.height)
 end
+
