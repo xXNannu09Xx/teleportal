@@ -1,3 +1,11 @@
+--[[
+To do list:
+    1. Make a basic test scene
+    2. Create the portal concept
+    3. Make basic art
+    4. A basic level
+]]
+
 function love.load()
     player = {}
     player.x = 100
