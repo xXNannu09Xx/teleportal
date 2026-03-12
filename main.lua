@@ -12,6 +12,7 @@ function love.load()
     player.isGrounded = false
 
     floorY = 500
+    background_image = love.graphics.newImage("christianBale.jpg")
 end
 
 function love.update(dt)
@@ -42,9 +43,8 @@ function love.keypressed(key)
 end
 
 function love.draw()
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.line(0, floorY, love.graphics.getWidth(), floorY)
+    love.graphics.setBackgroundColor(1, 1, 1)
+    love.graphics.draw(background_image)
 
-    love.graphics.setColor(0, 0.7, 1)
     love.graphics.rectangle("fill", player.x, player.y, player.width, player.height)
 end
