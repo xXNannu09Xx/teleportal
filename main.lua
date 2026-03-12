@@ -1,10 +1,18 @@
-function  love.load()
-    screenWidth = 800
-    screenHeight = 600
-    tableColor = {0, 0.5, 0.1}
+function love.load()
+    player = {}
+    player.x = 100
+    player.y = 100
+    player.width = 30
+    player.height = 30
+    player.speed = 200
+
+    player.yVelocity = 0
+    player.jumpHeight = -500
+    player.gravity = 1500
+    player.isGrounded = false
+
+    floorY = 500
 end
 
-function love.draw()
-    love.graphics.clear(tableColor)
-    love.graphics.printf( "Blackjack", 0, 300, 800, "center")
-end 
+function love.update(dt)
+    
