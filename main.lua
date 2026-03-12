@@ -56,4 +56,3 @@ function love.draw()
 
     love.graphics.rectangle("fill", player.x, player.y, player.width, player.height)
 end
-
