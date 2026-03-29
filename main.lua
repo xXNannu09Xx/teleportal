@@ -1,58 +1,63 @@
---[[
-To do list:
-    1. Make a basic test scene
-    2. Create the portal concept
-    3. Make basic art
-    4. A basic level
-]]
-
 function love.load()
-    player = {}
-    player.x = 100
-    player.y = 100
-    player.width = 30
-    player.height = 30
-    player.speed = 200
+    -- Platform setup
+    platform = {
+        {x = 50, y = 400, width = 200, height = 20},
+        {x = 300, y = 300, width = 200, height = 20},
+        --ground
+        {x = 0, y = 550, width = 800, height = 20}, 
+    }
+    -- Player setup
+    player = {
+        x = 100,
+        y = 300,
+        width = 32,
+        height = 32,
+        speed = 300,
+        jumpSpeed = -600,
+        velocityY = 0,
+        onGround = false
+    }
 
-    player.yVelocity = 0
-    player.jumpHeight = -500
-    player.gravity = 1500
-    player.isGrounded = false
-
-    floorY = 600
-    background_image = love.graphics.newImage("christianBale.jpg")
-end
+    gravity = 1500
+end 
 
 function love.update(dt)
-    if love.keyboard.isDown("right") then
-        player.x = player.x + (player.speed * dt)
-    elseif love.keyboard.isDown("left") then
-        player.x = player.x - (player.speed * dt)
-    end
-
-    player.yVelocity = player.yVelocity + (player.gravity * dt)
-    player.y = player.y + (player.yVelocity * dt)
-
-    if player.y + player.height > floorY then
-        player.y = floorY - player.height
-        player.yVelocity = 0
-        player.isGrounded = true
-    else
-        player.isGrounded = false
-    end
-end
-
-function love.keypressed(key)
-    if key == "space" or key == "up" then
-        if player.isGrounded then
-            player.yVelocity = player.jumpHeight
+    -- Horizontal Movement
+    if love.keyboard.isDown('d') then
+        if player.x < (love.graphics.getWidth() - player.img:getWidth()) then
+            player.x = player.x + (player.speed * dt)
         end
+    elseif love.keyboard.isDown('a') then
+        if player.x > 0 then
+            player.x = player.x - (player.speed * dt)
+        end
+    end
+
+    -- Vertical Movement (Jumping)
+    if love.keyboard.isDown('space') then
+        if player.y + player.img:getHeight() >= player.ground then
+            player.y_velocity = player.jump_height
+        end
+    end
+
+    -- Apply Physics
+    if player.y + player.img:getHeight() < player.ground or player.y_velocity < 0 then
+        player.y_velocity = player.y_velocity + (player.gravity * dt)
+        player.y = player.y + (player.y_velocity * dt)
+    end
+
+    if player.y + player.img:getHeight() > player.ground then
+        player.y_velocity = 0
+        player.y = player.ground - player.img:getHeight()
     end
 end
 
 function love.draw()
-    love.graphics.setBackgroundColor(1, 1, 1)
-    love.graphics.draw(background_image)
+    -- Draw Platform
+    love.graphics.setColor(1, 1, 1) 
+    love.graphics.rectangle('fill', platform.x, platform.y, platform.width, platform.height)
 
-    love.graphics.rectangle("fill", player.x, player.y, player.width, player.height)
+    -- Draw Player
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.draw(player.img, player.x, player.y)
 end
