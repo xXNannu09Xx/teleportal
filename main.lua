@@ -19,45 +19,56 @@ function love.load()
     }
 
     gravity = 1500
+
 end 
 
 function love.update(dt)
     -- Horizontal Movement
-    if love.keyboard.isDown('d') then
-        if player.x < (love.graphics.getWidth() - player.img:getWidth()) then
-            player.x = player.x + (player.speed * dt)
-        end
-    elseif love.keyboard.isDown('a') then
-        if player.x > 0 then
-            player.x = player.x - (player.speed * dt)
-        end
+    if love.keyboard.isDown('d') or love.keyboard.isDown('right') then
+        player.x = player.x + (player.speed * dt)
+    elseif love.keyboard.isDown('a') or love.keyboard.isDown('left') then
+        player.x = player.x - (player.speed * dt)
     end
 
     -- Vertical Movement (Jumping)
-    if love.keyboard.isDown('space') then
-        if player.y + player.img:getHeight() >= player.ground then
-            player.y_velocity = player.jump_height
+    player.velocityY = player.velocityY + gravity * dt
+    player.y = player.y + player.velocityY * dt
+    player.onGround = false
+
+    for _, platform in ipairs(platform) do
+        if checkCollision(player, platform) then
+            if player.velocityY > 0 and player.y + player.height - player.velocityY * dt <= platform.y then
+                player.y = platform.y - player.height
+                player.velocityY = 0
+                player.onGround = true
+            end
         end
     end
 
-    -- Apply Physics
-    if player.y + player.img:getHeight() < player.ground or player.y_velocity < 0 then
-        player.y_velocity = player.y_velocity + (player.gravity * dt)
-        player.y = player.y + (player.y_velocity * dt)
+    if (love.keyboard.isDown('space') or love.keyboard.isDown('w') or love.keyboard.isDown('up')) and player.onGround then
+        player.velocityY = player.jumpSpeed
+        player.onGround = false
     end
 
-    if player.y + player.img:getHeight() > player.ground then
-        player.y_velocity = 0
-        player.y = player.ground - player.img:getHeight()
+    if player.y > 600 then
+        player.y = 300
+        player.velocityY = 0
     end
+
 end
 
 function love.draw()
-    -- Draw Platform
-    love.graphics.setColor(1, 1, 1) 
-    love.graphics.rectangle('fill', platform.x, platform.y, platform.width, platform.height)
+    love.graphics.setColor(1,1,1)
+    love.graphics.setBackgroundColor(0.1, 0.1, 0.1)
+    love.graphics.rectangle("fill", player.x, player.y, player.width, player.height)
+    for _, platform in ipairs(platform) do
+        love.graphics.rectangle("fill", platform.x, platform.y, platform.width, platform.height)
+    end
+end
 
-    -- Draw Player
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.draw(player.img, player.x, player.y)
+function checkCollision(a, b)
+    return a.x < b.x + b.width and
+           a.x + a.width > b.x and
+           a.y < b.y + b.height and
+           a.y + a.height > b.y
 end
